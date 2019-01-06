@@ -9,13 +9,14 @@
 #include <map>
 #include <unordered_map>
 
+using namespace std;
 
 bool isMatch(std::string s, std::string p);
 
 int main()
 {
 
-	if (isMatch("aaa", "a*a"))
+	if (isMatch("abcdefg", ".*.*"))
 	{
 		std::cout << "true";
 		std::cout << std::endl;
@@ -87,91 +88,68 @@ Example 1 :
 
 bool isMatch(std::string s, std::string p)
 {
+	
+	/*******
 	//Some base case
 	if (p.empty()) return s.empty();
-
-	if (p == ".*") return true;
-
-	//simplified p
-	if (p.size() >= 4)
-	{
-		if (p[0] == p[2] && p[1] == p[3]=='*') return isMatch(s, p.substr(2));
-	}
-
-	
-
-	if (s.empty())
-	{
-		if (p.size() / 2 == 1) return false;
-		
-		int count = 0;
-		for (auto i : p)
-		{
-			i == '*';
-			++count;
-		}
-
-		if (count == p.size() / 2) return true;
-		else return false;
-	}
-
-	if (p[0] == '.'&&p[1] != '*') return isMatch(s.substr(1), p.substr(1));
-
-	/////////
-	
 
 
 	if (p[1] == '*')
 	{
-		if (p[0] == '.')
-		{
-			for (int i = 0; i < s.size(); i++)
-			{
-				if (isMatch(s.substr(i), p.substr(2)))
-				{
-					return true;
-				}
-				else return false;
-			}
-
-
-		}
-		else
-		{
-			if (p[0] != s[0]) return isMatch(s, p.substr(2));
-			else
-			{
-				std::string copy_s = s;
-				while (copy_s[0] == p[0]&&!copy_s.empty())
-				{
-					copy_s = copy_s.substr(1);
-				}
-				return isMatch(copy_s, p.substr(2));
-				
-
-			}
-		}
+		return isMatch(s, p.substr(2)) || (!s.empty() && (s[0] == p[0] || p[0] == '.') && isMatch(s.substr(1), p));
 	}
 	else
+		return !s.empty() && (s[0] == p[0] || p[0] == '.') && isMatch(s.substr(1), p.substr(1));
+	******/
+
+	//DP method
+
+	int m = s.length();
+	int n = p.length();
+
+	vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
+
+	dp[0][0] = true;
+
+	for (int i = 0; i <= m; ++i)
 	{
-		if (p[0] == '.')
+		for (int j = 1; j <= n; ++j)
 		{
-			return isMatch(s.substr(1), p.substr(1));
-		}
-		else
-		{
-			if (p[0] != s[0]) return false;
+			if (p[j - 1] == '*')
+			{
+				dp[i][j] = dp[i][j - 2] || (i > 0 && (s[i - 1] == p[j - 2] || p[j - 2] == '.') && dp[i - 1][j]);
+			}
 			else
 			{
-				return isMatch(s.substr(1), p.substr(1));
+				dp[i][j] = (i>0)&&(s[i - 1] == p[j - 1] || p[j - 1] == '.') && dp[i - 1][j - 1];
 			}
 		}
 	}
 
 
+	return dp[m][n];
 
 
 
 
 
+
+
+
+
+
+
+
+
+	/******
+	int m = s.length(), n = p.length();
+	vector<vector<bool> > dp(m + 1, vector<bool>(n + 1, false));
+	dp[0][0] = true;
+	for (int i = 0; i <= m; i++)
+		for (int j = 1; j <= n; j++)
+			if (p[j - 1] == '*')
+				dp[i][j] = dp[i][j - 2] || (i > 0 && (s[i - 1] == p[j - 2] || p[j - 2] == '.') && dp[i - 1][j]);
+			else dp[i][j] = i > 0 && dp[i - 1][j - 1] && (s[i - 1] == p[j - 1] || p[j - 1] == '.');
+	return dp[m][n];
+	****/
 }
