@@ -1,4 +1,4 @@
 Leetcode Question Solution
 ===========================
 
-This project contain the solutions of leetcode questions. 
+This project contains the solutions of leetcode questions. 
