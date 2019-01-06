@@ -97,3 +97,5 @@ bool isPalindrome(int x)
 	}
 	return (x == sum) || (x == sum / 10);
 }
+
+//Test
